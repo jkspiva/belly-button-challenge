@@ -25,6 +25,7 @@ function buildMetadata(sample) {
   });
 }
 
+
 // function to build both charts
 function buildCharts(sample) {
   d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json").then((data) => {
@@ -42,22 +43,54 @@ function buildCharts(sample) {
     let sample_values = result.sample_values;
 
     // Build a Bubble Chart
-    
+    let bubbleData = {
+      x: otu_ids,
+      y: sample_values,
+      mode: 'markers',
+      marker: {
+        size: sample_values,
+        color: otu_ids
+      },
+      text: otu_labels
+    };
+
+    let bubbleLayout = {
+      title: 'Bacteria Cultures Per Sample',
+      xaxis: {title: {text: 'OTU ID'}},
+      yaxis: {title: {text: 'Number of Bacteria'}}
+    };
 
     // Render the Bubble Chart
-    
+    Plotly.newPlot('bubble', bubbleData, bubbleLayout);
 
     // For the Bar Chart, map the otu_ids to a list of strings for your yticks
-
+    otu_ids = otu_ids.map(id => `OTU ${id}`);
 
     // Build a Bar Chart
     // Don't forget to slice and reverse the input data appropriately
+    otu_ids = otu_ids.slice(0,10).reverse();
+    sample_values = sample_values.slice(0,10).reverse();
+    otu_labels = otu_labels.slice(0,10).reverse();
 
+    let barData = {
+      type: 'bar',
+      x: sample_values,
+      y: otu_ids,
+      text: otu_labels,
+      orientation: 'h'
+    };
+
+    let barLayout = {
+      title: 'Top Ten Bacteria Cultures Found',
+      xaxis: {title: {text: 'Number of Bacteria'}},
+      height: 500
+    };
 
     // Render the Bar Chart
-
+    Plotly.newPlot('bar', barData, barLayout);
   });
 }
+
 
 // Function to run on page load
 function init() {
