@@ -43,16 +43,17 @@ function buildCharts(sample) {
     let sample_values = result.sample_values;
 
     // Build a Bubble Chart
-    let bubbleData = {
+    let bubbleData = [{
       x: otu_ids,
       y: sample_values,
       mode: 'markers',
       marker: {
         size: sample_values,
-        color: otu_ids
+        color: otu_ids,
+        colorscale: 'Earth'
       },
       text: otu_labels
-    };
+    }];
 
     let bubbleLayout = {
       title: 'Bacteria Cultures Per Sample',
@@ -72,13 +73,13 @@ function buildCharts(sample) {
     sample_values = sample_values.slice(0,10).reverse();
     otu_labels = otu_labels.slice(0,10).reverse();
 
-    let barData = {
+    let barData = [{
       type: 'bar',
       x: sample_values,
       y: otu_ids,
       text: otu_labels,
       orientation: 'h'
-    };
+    }];
 
     let barLayout = {
       title: 'Top Ten Bacteria Cultures Found',
@@ -97,28 +98,32 @@ function init() {
   d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json").then((data) => {
 
     // Get the names field
-
+    let names = data.names;
 
     // Use d3 to select the dropdown with id of `#selDataset`
-
+    let dropdown = d3.select('#selDataset');
 
     // Use the list of sample names to populate the select options
     // Hint: Inside a loop, you will need to use d3 to append a new
     // option for each sample name.
-
+    for (let name of names) {
+      dropdown.append('option').attr('value', name).text(name);
+    };
 
     // Get the first sample from the list
-
+    let firstSample = names[0];
 
     // Build charts and metadata panel with the first sample
-
+    buildMetadata(firstSample);
+    buildCharts(firstSample);
   });
 }
 
 // Function for event listener
 function optionChanged(newSample) {
   // Build charts and metadata panel each time a new sample is selected
-
+  buildMetadata(newSample);;
+  buildCharts(newSample)
 }
 
 // Initialize the dashboard
